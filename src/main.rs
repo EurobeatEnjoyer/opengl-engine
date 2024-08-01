@@ -1,3 +1,5 @@
+use render_gl::{BufferType, VertexArray, VertexBuffer};
+
 mod render_gl;
 
 fn main() {
@@ -26,7 +28,7 @@ fn main() {
         gl::ClearColor(0.3, 0.3, 0.6, 1.0);
     }
 
-    use std::ffi::{CStr, CString};
+    use std::ffi::CString;
 
     let vert_shader = render_gl::Shader::from_vert_source(
         &CString::new(include_str!("../assets/triangle.vert")).unwrap(),
@@ -44,8 +46,8 @@ fn main() {
         // positions        //colors
         -0.5, -0.5, 0.0, 1.0, 0.0, 0.0, // bottom right1
         0.5, -0.5, 0.0, 0.0, 1.0, 0.0, // bottom left
-        0.0, 0.5, 0.0, 0.0, 0.0, 1.0, // top
-        // -0.5, 0.5, 0.0, 1.0, 1.0, 1.0, // top
+        0.5, 0.5, 0.0, 0.0, 0.0, 1.0, // top
+        -0.5, 0.5, 0.0, 1.0, 1.0, 1.0, // top
     ];
 
     let mut vertices1: Vec<f32> = vec![
@@ -59,25 +61,26 @@ fn main() {
     // 0 1 2, 6 7 8, 12 13 14
     // 0 1 2, 0 1 2, 0 1 2
 
-    let mut vbo: gl::types::GLuint = 0;
-    unsafe { gl::GenBuffers(1, &mut vbo) }
+    let mut vbo = VertexBuffer::new().unwrap();
+    let target = BufferType::Array;
+    vbo.bind(target);
+    let sliced = unsafe {
+        std::slice::from_raw_parts(vertices.as_ptr() as *const u8, vertices.len() * std::mem::size_of::<f32>())
+    };
+    VertexBuffer::buffer_data(target, sliced, gl::STATIC_DRAW);
+    // unsafe {
+    //     gl::BufferData(
+    //         gl::ARRAY_BUFFER,
+    //         (vertices.len() * std::mem::size_of::<f32>()) as gl::types::GLsizeiptr,
+    //         vertices.as_ptr() as *const gl::types::GLvoid,
+    //         gl::STATIC_DRAW,
+    //     );
+    // }
 
+
+    let mut vao = VertexArray::new().unwrap();
+    vao.bind();
     unsafe {
-        gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
-        gl::BufferData(
-            gl::ARRAY_BUFFER,
-            (vertices.len() * std::mem::size_of::<f32>()) as gl::types::GLsizeiptr,
-            vertices.as_ptr() as *const gl::types::GLvoid,
-            gl::STATIC_DRAW,
-        );
-    }
-
-    let mut vao: gl::types::GLuint = 0;
-    unsafe { gl::GenVertexArrays(1, &mut vao) }
-
-    unsafe {
-        gl::BindVertexArray(vao);
-
         gl::EnableVertexAttribArray(0);
         gl::VertexAttribPointer(
             0,
@@ -101,7 +104,7 @@ fn main() {
         gl::BindBuffer(gl::ARRAY_BUFFER, 0);
         gl::BindVertexArray(0);
     }
-
+    let mut counter = 0;
     'main: loop {
         for event in event_pump.poll_iter() {
             match event {
@@ -115,8 +118,8 @@ fn main() {
         }
         shader_program.set_used();
         unsafe {
-            gl::BindVertexArray(vao);
-            gl::DrawArrays(gl::TRIANGLE_FAN, 0, 3);
+            vao.bind();
+            gl::DrawArrays(gl::TRIANGLE_FAN, 0, 4);
         }
         window.gl_swap_window();
         ///////////////////////////
