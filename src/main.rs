@@ -1,4 +1,7 @@
+use std::{ffi::c_void, ptr};
+
 use render_gl::{BufferType, VertexArray, VertexBuffer};
+use sdl2::libc::uint16_t;
 
 mod render_gl;
 
@@ -44,10 +47,18 @@ fn main() {
 
     let mut vertices: Vec<f32> = vec![
         // positions        //colors
-        -0.5, -0.5, 0.0, 1.0, 0.0, 0.0, // bottom right1
+        0.5, 0.5, 0.0, 1.0, 0.0, 0.0, // bottom right1
         0.5, -0.5, 0.0, 0.0, 1.0, 0.0, // bottom left
-        0.5, 0.5, 0.0, 0.0, 0.0, 1.0, // top
-        -0.5, 0.5, 0.0, 1.0, 1.0, 1.0, // top
+        -0.5, 0.5, 0.0, 0.0, 0.0, 1.0, // top
+        // -0.5, 0.5, 0.0, 1.0, 1.0, 1.0, // top
+        // 0.5, -0.5, 0.0, 1.0, 0.0, 0.0, // bottom right1
+        // -0.5, -0.5, 0.0, 0.0, 1.0, 0.0, // bottom left
+        -0.5, 0.5, 0.0, 0.0, 0.0, 1.0, // top
+    ];
+
+    let indicies: Vec<u16> = vec![
+        0, 1, 3, // first
+        1, 2, 3 // second
     ];
 
     let mut vertices1: Vec<f32> = vec![
@@ -61,25 +72,27 @@ fn main() {
     // 0 1 2, 6 7 8, 12 13 14
     // 0 1 2, 0 1 2, 0 1 2
 
-    let mut vbo = VertexBuffer::new().unwrap();
+    let vbo = VertexBuffer::new().unwrap();
     let target = BufferType::Array;
-    vbo.bind(target);
     let sliced = unsafe {
         std::slice::from_raw_parts(vertices.as_ptr() as *const u8, vertices.len() * std::mem::size_of::<f32>())
     };
-    VertexBuffer::buffer_data(target, sliced, gl::STATIC_DRAW);
-    // unsafe {
-    //     gl::BufferData(
-    //         gl::ARRAY_BUFFER,
-    //         (vertices.len() * std::mem::size_of::<f32>()) as gl::types::GLsizeiptr,
-    //         vertices.as_ptr() as *const gl::types::GLvoid,
-    //         gl::STATIC_DRAW,
-    //     );
-    // }
+
+    let indices_slice = unsafe {std::slice::from_raw_parts(indicies.as_ptr() as *const u8, indicies.len() * std::mem::size_of::<u16>())};
+
+    let ebo = VertexBuffer::new().unwrap(); 
 
 
-    let mut vao = VertexArray::new().unwrap();
+    let vao = VertexArray::new().unwrap();
+
     vao.bind();
+
+    vbo.bind(target);
+    VertexBuffer::buffer_data(target, sliced, gl::STATIC_DRAW);
+
+    ebo.bind(BufferType::ElementArray);
+    VertexBuffer::buffer_data(BufferType::ElementArray, indices_slice, gl::STATIC_DRAW);
+
     unsafe {
         gl::EnableVertexAttribArray(0);
         gl::VertexAttribPointer(
@@ -119,7 +132,9 @@ fn main() {
         shader_program.set_used();
         unsafe {
             vao.bind();
-            gl::DrawArrays(gl::TRIANGLE_FAN, 0, 4);
+            // gl::DrawArrays(gl::TRIANGLES, 0, 6);
+            gl::DrawElements(gl::TRIANGLES, 6,gl::UNSIGNED_INT , ptr::null());
+            // vao.clear_bind();
         }
         window.gl_swap_window();
         ///////////////////////////
