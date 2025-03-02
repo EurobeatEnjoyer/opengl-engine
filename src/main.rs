@@ -1,7 +1,10 @@
 mod render_gl;
+mod shader_gl;
 use crate::render_gl::*;
+use std::time::Instant;
 
 fn main() {
+    let now = Instant::now();
     let sdl = sdl2::init().unwrap();
     let video_subsystem = sdl.video().unwrap();
 
@@ -27,24 +30,28 @@ fn main() {
         gl::ClearColor(0.3, 0.3, 0.6, 1.0);
     }
 
-    use std::ffi::{CStr, CString};
+    /* SHADER PART START */
+    use std::ffi::CString;
 
-    let vert_shader = render_gl::Shader::from_vert_source(
+    let vert_shader = shader_gl::Shader::from_vert_source(
         &CString::new(include_str!("../assets/triangle.vert")).unwrap(),
     )
     .unwrap();
 
-    let frag_shader = render_gl::Shader::from_frag_source(
+    let frag_shader = shader_gl::Shader::from_frag_source(
         &CString::new(include_str!("../assets/triangle.frag")).unwrap(),
     )
     .unwrap();
 
-    let shader_program = render_gl::Program::from_shaders(&[vert_shader, frag_shader]).unwrap();
+    let shader_program = shader_gl::Program::from_shaders(&[vert_shader, frag_shader]).unwrap();
+
     shader_program.set_used();
     println!("using shader program:{}", shader_program.id());
 
     let err = unsafe { gl::GetError() };
     println!("OpenGL Error: {}", err);
+
+    /* SHADER PART END */
 
     let vertices: Vec<f32> = vec![
         // positions
@@ -70,6 +77,8 @@ fn main() {
 
     let ebo: Ebo = Ebo::init();
     ebo.set(&indices);
+
+    /* DEBUG SECTION START */
 
     let pos_attr = unsafe {
         gl::GetAttribLocation(shader_program.id(), CString::new("aPos").unwrap().as_ptr())
@@ -98,6 +107,10 @@ fn main() {
     }
     println!("EBO Bound: {}", ebo_bound);
 
+    /* DEBUG SECTION END */
+
+    // unsafe { gl::PolygonMode(gl::FRONT_AND_BACK, gl::LINE) }
+
     // println!("idk what this is: {:?}",ebo.);
 
     'main: loop {
@@ -113,6 +126,14 @@ fn main() {
             gl::Clear(gl::COLOR_BUFFER_BIT);
             // gl::PointSize(10.0);
             // gl::DrawArrays(gl::POINTS, 0, 1);
+            let time_value: f32 = now.elapsed().as_secs_f32();
+            let g_val = time_value.sin();
+
+            let vertex_color_location = gl::GetUniformLocation(
+                shader_program.id(),
+                CString::new("vertexColor").unwrap().as_ptr(),
+            );
+            gl::Uniform1f(vertex_color_location, g_val);
 
             gl::DrawElements(
                 gl::TRIANGLES,
