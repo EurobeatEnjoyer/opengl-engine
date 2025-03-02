@@ -52,12 +52,12 @@ fn main() {
         0.5, -0.5, 0.0, // bottom right
         -0.5, 0.5, 0.0, // top left
         // second triangle
-        0.5, -0.5, 0.0, // bottom right
+        // 0.5, -0.5, 0.0, // bottom right
         -0.5, -0.5, 0.0, // bottom let
     ];
 
     let indices: Vec<u32> = vec![
-        0, 1, 3, //first
+        0, 1, 2, //first
         1, 2, 3, //second
     ];
 
@@ -91,6 +91,12 @@ fn main() {
         gl::GetIntegerv(gl::VERTEX_ARRAY_BINDING, &mut vao_bound);
     }
     println!("VAO Bound: {}", vao_bound);
+
+    let mut ebo_bound = 0;
+    unsafe {
+        gl::GetIntegerv(gl::ELEMENT_ARRAY_BUFFER_BINDING, &mut ebo_bound);
+    }
+    println!("EBO Bound: {}", ebo_bound);
 
     // println!("idk what this is: {:?}",ebo.);
 
