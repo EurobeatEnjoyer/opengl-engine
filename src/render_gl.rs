@@ -1,5 +1,5 @@
 use gl;
-use gl::types::GLuint;
+use gl::types::{GLuint, GLvoid};
 use std;
 
 pub struct Vbo {
@@ -115,6 +115,10 @@ impl Vao {
         self.bind();
         self.setup();
     }
+    pub fn set2(&self) {
+        self.bind();
+        self.setup2();
+    }
 
     fn setup(&self) {
         unsafe {
@@ -127,6 +131,38 @@ impl Vao {
                 (3 * std::mem::size_of::<f32>()) as gl::types::GLint,
                 std::ptr::null(),
             );
+        }
+    }
+
+    fn setup2(&self) {
+        unsafe {
+            gl::VertexAttribPointer(
+                0,
+                3,
+                gl::FLOAT,
+                gl::FALSE,
+                (8 * std::mem::size_of::<f32>()) as gl::types::GLint,
+                std::ptr::null(),
+            );
+            gl::EnableVertexAttribArray(0);
+            gl::VertexAttribPointer(
+                1,
+                3,
+                gl::FLOAT,
+                gl::FALSE,
+                (8 * std::mem::size_of::<f32>()) as gl::types::GLint,
+                (3 * std::mem::size_of::<f32>()) as *const GLvoid,
+            );
+            gl::EnableVertexAttribArray(1);
+            gl::VertexAttribPointer(
+                2,
+                2,
+                gl::FLOAT,
+                gl::FALSE,
+                (8 * std::mem::size_of::<f32>()) as gl::types::GLint,
+                (6 * std::mem::size_of::<f32>()) as *const GLvoid,
+            );
+            gl::EnableVertexAttribArray(2);
         }
     }
 

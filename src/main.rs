@@ -1,5 +1,8 @@
 mod render_gl;
 mod shader_gl;
+mod texture_gl;
+use texture_gl::Texture;
+
 use crate::render_gl::*;
 use std::time::Instant;
 
@@ -43,28 +46,55 @@ fn main() {
     )
     .unwrap();
 
-    let shader_program = shader_gl::Program::from_shaders(&[vert_shader, frag_shader]).unwrap();
+    let texture_vert = shader_gl::Shader::from_vert_source(
+        &CString::new(include_str!("../assets/texture.vs")).unwrap(),
+    )
+    .unwrap();
+    let texture_frag = shader_gl::Shader::from_vert_source(
+        &CString::new(include_str!("../assets/texture.fs")).unwrap(),
+    )
+    .unwrap();
 
-    shader_program.set_used();
-    println!("using shader program:{}", shader_program.id());
+    // let shader_program = shader_gl::Program::from_shaders(&[vert_shader, frag_shader]).unwrap();
+
+    let texture_shader_program =
+        shader_gl::Program::from_shaders(&[texture_vert, texture_frag]).unwrap();
+
+    // shader_program.set_used();
+    // println!("using shader program:{}", shader_program.id());
 
     let err = unsafe { gl::GetError() };
     println!("OpenGL Error: {}", err);
 
     /* SHADER PART END */
 
+    let texture_coordinates: Vec<f32> = vec![
+        0.0, 0.0, //lower-left
+        1.0, 0.0, //lower right
+        0.5, 1.0, //top center
+    ];
+
+    // let vertices: Vec<f32> = vec![
+    // positions
+    //     0.5, 0.5, 0.0, // top right
+    //     0.5, -0.5, 0.0, // bottom right
+    //     -0.5, 0.5, 0.0, // top left
+    // second triangle
+    // 0.5, -0.5, 0.0, // bottom right
+    //     -0.5, -0.5, 0.0, // bottom let
+    // ];
+
+    //Texture example
     let vertices: Vec<f32> = vec![
-        // positions
-        0.5, 0.5, 0.0, // top right
-        0.5, -0.5, 0.0, // bottom right
-        -0.5, 0.5, 0.0, // top left
-        // second triangle
-        // 0.5, -0.5, 0.0, // bottom right
-        -0.5, -0.5, 0.0, // bottom let
+        // positions          // colors           // texture coords
+        0.5, 0.5, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, // top right
+        0.5, -0.5, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, // bottom right
+        -0.5, -0.5, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, // bottom left
+        -0.5, 0.5, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, // top left
     ];
 
     let indices: Vec<u32> = vec![
-        0, 1, 2, //first
+        0, 1, 3, //first
         1, 2, 3, //second
     ];
 
@@ -72,16 +102,22 @@ fn main() {
     vbo.set(&vertices);
 
     let vao: Vao = Vao::init();
-    vao.set();
+    vao.set2();
     println!("vao id:{}", vao.id);
 
     let ebo: Ebo = Ebo::init();
     ebo.set(&indices);
 
+    let txt: texture_gl::Texture = texture_gl::Texture::init();
+    txt.set_defaults("assets/wall.png");
+
     /* DEBUG SECTION START */
 
     let pos_attr = unsafe {
-        gl::GetAttribLocation(shader_program.id(), CString::new("aPos").unwrap().as_ptr())
+        gl::GetAttribLocation(
+            texture_shader_program.id(),
+            CString::new("aPos").unwrap().as_ptr(),
+        )
     };
     println!("Position attribute location: {}", pos_attr);
     let mut size = 0;
@@ -91,7 +127,7 @@ fn main() {
     println!("VBO Size: {}", size);
     let mut status = 0;
     unsafe {
-        gl::GetProgramiv(shader_program.id(), gl::LINK_STATUS, &mut status);
+        gl::GetProgramiv(texture_shader_program.id(), gl::LINK_STATUS, &mut status);
     }
     println!("Shader Program Link Status: {}", status);
 
@@ -112,6 +148,7 @@ fn main() {
     // unsafe { gl::PolygonMode(gl::FRONT_AND_BACK, gl::LINE) }
 
     // println!("idk what this is: {:?}",ebo.);
+    texture_shader_program.set_used();
 
     'main: loop {
         for event in event_pump.poll_iter() {
@@ -126,14 +163,16 @@ fn main() {
             gl::Clear(gl::COLOR_BUFFER_BIT);
             // gl::PointSize(10.0);
             // gl::DrawArrays(gl::POINTS, 0, 1);
-            let time_value: f32 = now.elapsed().as_secs_f32();
-            let g_val = time_value.sin();
-
-            let vertex_color_location = gl::GetUniformLocation(
-                shader_program.id(),
-                CString::new("vertexColor").unwrap().as_ptr(),
-            );
-            gl::Uniform1f(vertex_color_location, g_val);
+            // let time_value: f32 = now.elapsed().as_secs_f32();
+            // let g_val = time_value.sin();
+            //
+            // let vertex_color_location = gl::GetUniformLocation(
+            //     shader_program.id(),
+            //     CString::new("vertexColor").unwrap().as_ptr(),
+            // );
+            // gl::Uniform1f(vertex_color_location, g_val);
+            gl::ActiveTexture(gl::TEXTURE0);
+            gl::BindTexture(gl::TEXTURE_2D, txt.id());
 
             gl::DrawElements(
                 gl::TRIANGLES,
