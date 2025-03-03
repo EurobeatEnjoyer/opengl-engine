@@ -1,3 +1,8 @@
+use std::{ffi::c_void, ptr};
+
+use render_gl::{BufferType, VertexArray, VertexBuffer};
+use sdl2::libc::uint16_t;
+
 mod render_gl;
 mod shader_gl;
 mod texture_gl;
@@ -33,7 +38,9 @@ fn main() {
         gl::ClearColor(0.3, 0.3, 0.6, 1.0);
     }
 
+
     /* SHADER PART START */
+
     use std::ffi::CString;
 
     let vert_shader = shader_gl::Shader::from_vert_source(
@@ -74,6 +81,7 @@ fn main() {
         0.5, 1.0, //top center
     ];
 
+
     // let vertices: Vec<f32> = vec![
     // positions
     //     0.5, 0.5, 0.0, // top right
@@ -91,6 +99,8 @@ fn main() {
         0.5, -0.5, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, // bottom right
         -0.5, -0.5, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, // bottom left
         -0.5, 0.5, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, // top left
+
+
     ];
 
     let indices: Vec<u32> = vec![
@@ -100,6 +110,7 @@ fn main() {
 
     let vbo: Vbo = Vbo::init();
     vbo.set(&vertices);
+
 
     let vao: Vao = Vao::init();
     vao.set2();
@@ -150,6 +161,7 @@ fn main() {
     // println!("idk what this is: {:?}",ebo.);
     texture_shader_program.set_used();
 
+
     'main: loop {
         for event in event_pump.poll_iter() {
             match event {
@@ -161,6 +173,7 @@ fn main() {
         unsafe {
             gl::ClearColor(1.0, 0.0, 0.0, 1.0);
             gl::Clear(gl::COLOR_BUFFER_BIT);
+
             // gl::PointSize(10.0);
             // gl::DrawArrays(gl::POINTS, 0, 1);
             // let time_value: f32 = now.elapsed().as_secs_f32();
@@ -181,6 +194,7 @@ fn main() {
                 0 as *const _,
             );
             // gl::DrawArrays(gl::TRIANGLES, 0, 3);
+
         }
         window.gl_swap_window();
         ///////////////////////////
