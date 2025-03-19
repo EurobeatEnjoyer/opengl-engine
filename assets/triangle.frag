@@ -1,12 +1,9 @@
 #version 330 core
+out vec4 FragColor;
 
-in VS_OUTPUT {
-    vec3 Color;
-} IN;
-
-out vec4 Color;
+uniform float vertexColor;
 
 void main()
 {
-    Color = vec4(IN.Color, 1.0);
+    FragColor = vec4(vertexColor,vertexColor * 2, vertexColor * 4, 1.0);
 }
