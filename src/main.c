@@ -16,6 +16,8 @@
 
 int _texture_rendering();
 
+void handle_input(SDL_Event *e, int *running);
+
 int main(int argc, char *argv[]) { return _texture_rendering(); }
 
 int _texture_rendering() {
@@ -195,6 +197,7 @@ int _texture_rendering() {
       if (event.type == SDL_EVENT_QUIT) {
         running = 0;
       }
+      handle_input(&event, &running);
     }
     frames++;
     if ((SDL_GetTicks() - frametime) >= 1000) {
@@ -205,8 +208,8 @@ int _texture_rendering() {
     /* printf("%" PRId64 "\n", SDL_GetTicks()); */
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    glm_rotate(trans, SDL_GetTicks(), vec);
-    programTransform(&shaderProgram, &trans);
+    /* glm_rotate(trans, SDL_GetTicks(), vec); */
+    /* programTransform(&shaderProgram, &trans); */
     /* unsigned int transformLocation = */
     /*     glGetUniformLocation(shaderProgram.id, "transform"); */
     /* unsigned int attriblocation = glGetAttribLocation(shaderProgram.id,
@@ -229,4 +232,12 @@ int _texture_rendering() {
   SDL_DestroyWindow(window);
   SDL_Quit();
   return 0;
+}
+
+void handle_input(SDL_Event *e, int *running) {
+  if (e->type == SDL_EVENT_KEY_DOWN) {
+    if (e->key.key == SDLK_ESCAPE) {
+      *running = 0;
+    }
+  }
 }
