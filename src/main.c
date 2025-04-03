@@ -5,6 +5,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_error.h>
 #include <SDL3/SDL_init.h>
+#include <SDL3/SDL_keyboard.h>
 #include <SDL3/SDL_video.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,20 +52,36 @@ int main(int argc, char *argv[]) {
 
   Program shaderProgram;
   Shader shaders[2] = {vertShader, fragShader};
-  fromShaders(&shaderProgram, shaders, 2);
+  fromShaders(&shaderProgram, shaders, sizeof(shaders));
 
   // VAO VBO EBO PART START
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   float vertices[] = {
       -0.5f, -0.5f, 0.0f, // left
       0.5f,  -0.5f, 0.0f, // right
       0.0f,  0.5f,  0.0f  // top
   };
 
+  float eboVertices[] = {
+      0.5f,  0.5f,  0.0f, // top right
+      0.5f,  -0.5f, 0.0f, // bottom right
+      -0.5f, -0.5f, 0.0f, // bottom left
+      -0.5f, 0.5f,  0.0f  // top left
+  };
+
+  unsigned int indices[] = {
+      0, 1, 3, // first triangle
+      1, 2, 3  // second triangle
+  };
+
   VBO *vbo = vboInit();
   VAO *vao = vaoInit();
+  EBO *ebo = eboInit();
 
-  vboSet(vbo, vertices, sizeof(vertices));
-  vaoSet(vao, vertices, sizeof(vertices));
+  vaoSet(vao, 0, eboVertices, sizeof(eboVertices));
+  vboSet(vbo, eboVertices, sizeof(eboVertices));
+  eboSet(ebo, indices, sizeof(indices));
+  /////////////////////////////////////////////////////////////////////////////////////////////////
   // VAO VBO EBO PART END
   int running = 1;
   SDL_Event event;
@@ -74,14 +91,20 @@ int main(int argc, char *argv[]) {
         running = 0;
       }
     }
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
 
     // GL THINGS
     glClear(GL_COLOR_BUFFER_BIT);
     programSetUsed(&shaderProgram);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    /* glDrawArrays(GL_TRIANGLES, 0, 3); */
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     // Swap buffers
     SDL_GL_SwapWindow(window);
   }
+  vaoDrop(vao);
+  vboDrop(vbo);
+  eboDrop(ebo);
   SDL_GL_DestroyContext(glContext);
   SDL_DestroyWindow(window);
   SDL_Quit();

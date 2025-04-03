@@ -20,19 +20,19 @@ void vboSet(VBO *vbo, float *data, size_t size);
 void vboDrop(VBO *vbo);
 
 VAO *vaoInit();
-void vaoSet(VAO *vao, float *data, size_t size);
+void vaoSet(VAO *vao, unsigned int type, float *data, size_t size);
 void vaoDrop(VAO *vao);
 
 EBO *eboInit();
-void eboSet(EBO *ebo, float *data, size_t size);
+void eboSet(EBO *ebo, unsigned int *data, size_t size);
 void eboDrop(EBO *ebo);
 
-void _eboSetup(EBO *ebo);
 void _eboUnbind(EBO *ebo);
 void _eboDelete(EBO *ebo);
+void _eboBind(EBO *ebo);
 
 void _vaoSetup(VAO *vao);
-void _vaoUnbind(VAO *vao);
+void _vaoUnbind();
 void _vaoDelete(VAO *vao);
 
 void _vboBind(VBO *vbo);
