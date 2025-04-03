@@ -1,3 +1,4 @@
+#include "../include/render_gl.h"
 #include "../include/shader_gl.h"
 #include <GL/gl.h>
 #include <GL/glext.h>
@@ -52,6 +53,19 @@ int main(int argc, char *argv[]) {
   Shader shaders[2] = {vertShader, fragShader};
   fromShaders(&shaderProgram, shaders, 2);
 
+  // VAO VBO EBO PART START
+  float vertices[] = {
+      -0.5f, -0.5f, 0.0f, // left
+      0.5f,  -0.5f, 0.0f, // right
+      0.0f,  0.5f,  0.0f  // top
+  };
+
+  VBO *vbo = vboInit();
+  VAO *vao = vaoInit();
+
+  vboSet(vbo, vertices, sizeof(vertices));
+  vaoSet(vao, vertices, sizeof(vertices));
+  // VAO VBO EBO PART END
   int running = 1;
   SDL_Event event;
   while (running) {
@@ -63,6 +77,8 @@ int main(int argc, char *argv[]) {
 
     // GL THINGS
     glClear(GL_COLOR_BUFFER_BIT);
+    programSetUsed(&shaderProgram);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
     // Swap buffers
     SDL_GL_SwapWindow(window);
   }
