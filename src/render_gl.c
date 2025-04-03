@@ -1,13 +1,12 @@
 #include "../include/render_gl.h"
 #include <GL/glext.h>
+#include <malloc.h>
 #include <stdio.h>
 
 /*VBO PART */
 VBO *vboInit() {
-  GLuint id = 0;
-  glGenBuffers(1, &id);
-  VBO *vbo;
-  vbo->id = id;
+  VBO *vbo = (VBO *)malloc(sizeof(VBO));
+  glGenBuffers(1, &vbo->id);
   return vbo;
 }
 
@@ -28,10 +27,8 @@ void vboDrop(VBO *vbo) {
 }
 /*VAO PART */
 VAO *vaoInit() {
-  GLuint id = 0;
-  glGenVertexArrays(1, &id);
-  VAO *vao;
-  vao->id = id;
+  VAO *vao = (VAO *)malloc(sizeof(VAO));
+  glGenVertexArrays(1, &vao->id);
   return vao;
 }
 
@@ -81,10 +78,8 @@ void vaoDrop(VAO *vao) {
 
 /*EBO PART */
 EBO *eboInit() {
-  GLuint id = 0;
-  glGenBuffers(1, &id);
-  EBO *ebo;
-  ebo->id = id;
+  EBO *ebo = (EBO *)malloc(sizeof(EBO));
+  glGenBuffers(1, &ebo->id);
   return ebo;
 }
 

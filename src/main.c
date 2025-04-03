@@ -56,11 +56,11 @@ int main(int argc, char *argv[]) {
 
   // VAO VBO EBO PART START
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  float vertices[] = {
-      -0.5f, -0.5f, 0.0f, // left
-      0.5f,  -0.5f, 0.0f, // right
-      0.0f,  0.5f,  0.0f  // top
-  };
+  /* float vertices[] = { */
+  /*     -0.5f, -0.5f, 0.0f, // left */
+  /*     0.5f,  -0.5f, 0.0f, // right */
+  /*     0.0f,  0.5f,  0.0f  // top */
+  /* }; */
 
   float eboVertices[] = {
       0.5f,  0.5f,  0.0f, // top right
@@ -78,8 +78,9 @@ int main(int argc, char *argv[]) {
   VAO *vao = vaoInit();
   EBO *ebo = eboInit();
 
-  vaoSet(vao, 0, eboVertices, sizeof(eboVertices));
+  /* VBO COMES BEFORE VAO!!!! VBO -> VAO -> EBO */
   vboSet(vbo, eboVertices, sizeof(eboVertices));
+  vaoSet(vao, 0, eboVertices, sizeof(eboVertices));
   eboSet(ebo, indices, sizeof(indices));
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // VAO VBO EBO PART END
