@@ -1,5 +1,6 @@
 #include "../include/render_gl.h"
 #include "../include/shader_gl.h"
+#include "../include/texture_gl.h"
 #include <GL/gl.h>
 #include <GL/glext.h>
 #include <SDL3/SDL.h>
@@ -37,8 +38,8 @@ int main(int argc, char *argv[]) {
   }
   glewInit();
   glClearColor(0.3f, 0.3f, 0.5f, 1.0f);
-  const char *vertLocation = "./src/triangle.vert";
-  const char *fragLocation = "./src/triangle.frag";
+  const char *vertLocation = "assets/texture.vs";
+  const char *fragLocation = "assets/texture.fs";
 
   char *vertSource = readShaderFile(vertLocation);
   char *fragSource = readShaderFile(fragLocation);
@@ -56,11 +57,27 @@ int main(int argc, char *argv[]) {
 
   // VAO VBO EBO PART START
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  /* float vertices[] = { */
-  /*     -0.5f, -0.5f, 0.0f, // left */
-  /*     0.5f,  -0.5f, 0.0f, // right */
-  /*     0.0f,  0.5f,  0.0f  // top */
-  /* }; */
+  float textureVertices[] = {
+      // positions        // colors         // texture coords
+      0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // top right
+      0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // bottom right
+      -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom left
+      -0.5f, 0.5f,  0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f  // top left
+  };
+
+  float vertices[] = {
+      -0.5f, -0.5f, 0.0f, // left
+      0.5f,  -0.5f, 0.0f, // right
+      0.0f,  0.5f,  0.0f  // top
+  };
+
+  float colorVertices[] = {
+      // positions         // colors
+      0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, // top right
+      0.5f,  -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom right
+      -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom left
+      -0.5f, 0.5f,  0.0f, 0.0f, 0.0f, 1.0f  // top left
+  };
 
   float eboVertices[] = {
       0.5f,  0.5f,  0.0f, // top right
@@ -74,16 +91,24 @@ int main(int argc, char *argv[]) {
       1, 2, 3  // second triangle
   };
 
-  VBO *vbo = vboInit();
   VAO *vao = vaoInit();
+  VBO *vbo = vboInit();
   EBO *ebo = eboInit();
 
   /* VBO COMES BEFORE VAO!!!! VBO -> VAO -> EBO */
-  vboSet(vbo, eboVertices, sizeof(eboVertices));
-  vaoSet(vao, 0, eboVertices, sizeof(eboVertices));
+  vboSet(vbo, textureVertices, sizeof(textureVertices));
+  vaoSet(vao, 2, textureVertices, sizeof(textureVertices));
   eboSet(ebo, indices, sizeof(indices));
+  programSetUsed(&shaderProgram);
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // VAO VBO EBO PART END
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // TEXTURE START
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  Texture *texture = textureInitWithLocation("assets/wall.jpg");
+  textureDefaults2D(texture);
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // TEXTURE END
   int running = 1;
   SDL_Event event;
   while (running) {
@@ -96,8 +121,6 @@ int main(int argc, char *argv[]) {
     glClear(GL_COLOR_BUFFER_BIT);
 
     // GL THINGS
-    glClear(GL_COLOR_BUFFER_BIT);
-    programSetUsed(&shaderProgram);
     /* glDrawArrays(GL_TRIANGLES, 0, 3); */
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     // Swap buffers

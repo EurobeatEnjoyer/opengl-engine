@@ -1,6 +1,6 @@
 # tool macros
 CC := gcc
-CFLAGS := -lglfw -lSDL3 -lGLEW -lEGL -lGL -lGLU -lOpenGL # FILL: compile flags
+CFLAGS := -lglfw -lSDL3 -lGLEW -lEGL -lGL -lGLU -lOpenGL -lm # FILL: compile flags
 DBGFLAGS := -g
 COBJFLAGS := $(CFLAGS) -c
 
