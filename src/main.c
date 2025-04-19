@@ -61,13 +61,68 @@ int _texture_rendering() {
 
   // VAO VBO EBO PART START
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  float textureVertices[] = {
-      // positions        // colors         // texture coords
-      0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // top right
-      0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // bottom right
-      -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom left
-      -0.5f, 0.5f,  0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f  // top left
-  };
+  /* float textureVertices[] = { */
+  /*     // positions        // colors         // texture coords */
+  /*     0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // top right */
+  /*     0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // bottom right */
+  /*     -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom left */
+  /*     -0.5f, 0.5f,  0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f  // top left */
+  /* }; */
+
+  float cubeVertices[] = {-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, //
+                          0.5f, -0.5f, -0.5f, 1.0f, 0.0f,  //
+                          0.5f, 0.5f, -0.5f, 1.0f, 1.0f,   //
+                          0.5f, 0.5f, -0.5f, 1.0f, 1.0f,   //
+                          -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,  //
+                          -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, //
+                                                           //
+                          -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,  //
+                          0.5f, -0.5f, 0.5f, 1.0f, 0.0f,   //
+                          0.5f, 0.5f, 0.5f, 1.0f, 1.0f,    //
+                          0.5f, 0.5f, 0.5f, 1.0f, 1.0f,    //
+                          -0.5f, 0.5f, 0.5f, 0.0f, 1.0f,   //
+                          -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,  //
+                                                           //
+                          -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,   //
+                          -0.5f, 0.5f, -0.5f, 1.0f, 1.0f,  //
+                          -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, //
+                          -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, //
+                          -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,  //
+                          -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,   //
+                                                           //
+                          0.5f, 0.5f, 0.5f, 1.0f, 0.0f,    //
+                          0.5f, 0.5f, -0.5f, 1.0f, 1.0f,   //
+                          0.5f, -0.5f, -0.5f, 0.0f, 1.0f,  //
+                          0.5f, -0.5f, -0.5f, 0.0f, 1.0f,  //
+                          0.5f, -0.5f, 0.5f, 0.0f, 0.0f,   //
+                          0.5f, 0.5f, 0.5f, 1.0f, 0.0f,    //
+                                                           //
+                          -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, //
+                          0.5f, -0.5f, -0.5f, 1.0f, 1.0f,  //
+                          0.5f, -0.5f, 0.5f, 1.0f, 0.0f,   //
+                          0.5f, -0.5f, 0.5f, 1.0f, 0.0f,   //
+                          -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,  //
+                          -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, //
+                                                           //
+                          -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,  //
+                          0.5f, 0.5f, -0.5f, 1.0f, 1.0f,   //
+                          0.5f, 0.5f, 0.5f, 1.0f, 0.0f,    //
+                          0.5f, 0.5f, 0.5f, 1.0f, 0.0f,    //
+                          -0.5f, 0.5f, 0.5f, 0.0f, 0.0f,   //
+                          -0.5f, 0.5f, -0.5f, 0.0f, 1.0f};
+
+  /* float cubePositions[] = {(vec3)((float[]){0.0f, 0.0f, 0.0f}), */
+  /*                          (vec3)(float[]){2.0f, 5.0f, -15.0f}, */
+  /*                          (vec3)(float[]){-1.5f, -2.2f, -2.5f}, */
+  /*                          (vec3)(float[]){-3.8f, -2.0f, -12.3f}, */
+  /*                          (vec3)(float[]){2.4f, -0.4f, -3.5f}, */
+  /*                          (vec3)(float[]){-1.7f, 3.0f, -7.5f}, */
+  /*                          (vec3)(float[]){1.3f, -2.0f, -2.5f}, */
+  /*                          (vec3)(float[]){1.5f, 2.0f, -2.5f}, */
+  /*                          (vec3)(float[]){1.5f, 0.2f, -1.5f}, */
+  /*                          (vec3)(float[]){-1.3f, 1.0f, -1.5f} */
+  /**/
+  /* }; */
 
   vec3 vec = {0.0f, 0.0f, 1.0f};
   vec3 scaling_vector = {0.5f, 0.5f, 0.5f};
@@ -113,14 +168,14 @@ int _texture_rendering() {
       1, 2, 3  // second triangle
   };
 
-  VAO *vao = vaoInit();
-  VBO *vbo = vboInit();
-  EBO *ebo = eboInit();
+  VAO vao = vaoInit();
+  VBO vbo = vboInit();
+  EBO ebo = eboInit();
 
   /* VBO COMES BEFORE VAO!!!! VBO -> VAO -> EBO */
-  vboSet(vbo, textureVertices, sizeof(textureVertices));
-  vaoSet(vao, 2, textureVertices, sizeof(textureVertices));
-  eboSet(ebo, indices, sizeof(indices));
+  vboSet(&vbo, textureVertices, sizeof(textureVertices));
+  vaoSet(&vao, 2, textureVertices, sizeof(textureVertices));
+  eboSet(&ebo, indices, sizeof(indices));
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // VAO VBO EBO PART END
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -142,7 +197,7 @@ int _texture_rendering() {
       }
     }
     frames++;
-    if ((SDL_GetTicks() - frametime) > 1000) {
+    if ((SDL_GetTicks() - frametime) >= 1000) {
       printf("fps: %d\n", frames);
       frametime = SDL_GetTicks();
       frames = 0;
@@ -151,12 +206,14 @@ int _texture_rendering() {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glm_rotate(trans, SDL_GetTicks(), vec);
-    unsigned int transformLocation =
-        glGetUniformLocation(shaderProgram.id, "transform");
+    programTransform(&shaderProgram, &trans);
+    /* unsigned int transformLocation = */
+    /*     glGetUniformLocation(shaderProgram.id, "transform"); */
     /* unsigned int attriblocation = glGetAttribLocation(shaderProgram.id,
      * "aPos"); */
     /* printf("Transform location: %d\n", transformLocation); */
-    glUniformMatrix4fv(transformLocation, 1, GL_FALSE, (const GLfloat *)trans);
+    /* glUniformMatrix4fv(transformLocation, 1, GL_FALSE, (const GLfloat
+     * *)trans); */
     programSetUsed(&shaderProgram);
 
     // GL THINGS
@@ -165,9 +222,9 @@ int _texture_rendering() {
     // Swap buffers
     SDL_GL_SwapWindow(window);
   }
-  vaoDrop(vao);
-  vboDrop(vbo);
-  eboDrop(ebo);
+  vaoDrop(&vao);
+  vboDrop(&vbo);
+  eboDrop(&ebo);
   SDL_GL_DestroyContext(glContext);
   SDL_DestroyWindow(window);
   SDL_Quit();

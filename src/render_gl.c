@@ -4,9 +4,9 @@
 #include <stdio.h>
 
 /*VBO PART */
-VBO *vboInit() {
-  VBO *vbo = (VBO *)malloc(sizeof(VBO));
-  glGenBuffers(1, &vbo->id);
+VBO vboInit() {
+  VBO vbo;
+  glGenBuffers(1, &vbo.id);
   return vbo;
 }
 
@@ -26,9 +26,9 @@ void vboDrop(VBO *vbo) {
   _vboDelete(vbo);
 }
 /*VAO PART */
-VAO *vaoInit() {
-  VAO *vao = (VAO *)malloc(sizeof(VAO));
-  glGenVertexArrays(1, &vao->id);
+VAO vaoInit() {
+  VAO vao;
+  glGenVertexArrays(1, &vao.id);
   return vao;
 }
 
@@ -77,9 +77,9 @@ void vaoDrop(VAO *vao) {
 }
 
 /*EBO PART */
-EBO *eboInit() {
-  EBO *ebo = (EBO *)malloc(sizeof(EBO));
-  glGenBuffers(1, &ebo->id);
+EBO eboInit() {
+  EBO ebo;
+  glGenBuffers(1, &ebo.id);
   return ebo;
 }
 

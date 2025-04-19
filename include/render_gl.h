@@ -15,15 +15,15 @@ typedef struct {
   GLuint id;
 } EBO;
 
-VBO *vboInit();
+VBO vboInit();
 void vboSet(VBO *vbo, float *data, size_t size);
 void vboDrop(VBO *vbo);
 
-VAO *vaoInit();
+VAO vaoInit();
 void vaoSet(VAO *vao, unsigned int type, float *data, size_t size);
 void vaoDrop(VAO *vao);
 
-EBO *eboInit();
+EBO eboInit();
 void eboSet(EBO *ebo, unsigned int *data, size_t size);
 void eboDrop(EBO *ebo);
 
