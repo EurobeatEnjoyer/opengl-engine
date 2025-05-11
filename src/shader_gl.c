@@ -83,5 +83,11 @@ void shaderFromSource(Shader *shader, const char *source, GLenum kind) {
   }
   shader->id = id;
 }
+void programTransform(Program *program, const mat4 *transform) {
+  unsigned int transformLocation =
+      glGetUniformLocation(program->id, "transform");
+  glUniformMatrix4fv(transformLocation, 1, GL_FALSE,
+                     (const GLfloat *)transform);
+}
 
 void shaderDrop(Shader *shader) { glDeleteShader(shader->id); }

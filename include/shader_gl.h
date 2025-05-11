@@ -3,6 +3,7 @@
 // dont touch this
 #include <GL/glew.h>
 // dont touch
+#include "cglm/cglm.h"
 #include <GL/gl.h>
 #include <GLFW/glfw3.h>
 #include <malloc.h>
@@ -25,6 +26,7 @@ typedef struct {
 void fromShaders(Program *program, Shader *shaders, int count);
 void programSetUsed(Program *program);
 void programDrop(Program *program);
+void programTransform(Program *program, const mat4 *transform);
 
 // Shader read part
 char *readShaderFile(const char *filePath);
